@@ -3,10 +3,12 @@ import vue from '@vitejs/plugin-vue';
 import monkey, {cdn} from 'vite-plugin-monkey';
 import {resolve} from 'path'
 import vueJsx from "@vitejs/plugin-vue-jsx";
+import {visualizer} from "rollup-plugin-visualizer";
 
 function pathResolve(dir) {
   return resolve(__dirname, ".", dir)
 }
+const lifecycle = process.env.npm_lifecycle_event;
 
 export default defineConfig({
   plugins: [
@@ -45,6 +47,14 @@ export default defineConfig({
         },
       },
     }),
+    lifecycle === 'report' ?
+      visualizer({
+        gzipSize: true,
+        brotliSize: true,
+        emitFile: false,
+        filename: "report.html", //分析图生成的文件名
+        open: true //如果存在本地服务端口，将在打包后自动展示
+      }) : null,
   ],
   resolve: {
     alias: {
